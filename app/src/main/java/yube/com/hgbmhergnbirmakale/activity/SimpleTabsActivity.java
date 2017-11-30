@@ -1,5 +1,6 @@
 package yube.com.hgbmhergnbirmakale.activity;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -74,7 +76,7 @@ public class SimpleTabsActivity extends AppCompatActivity {
                 Document doc = Jsoup.connect("http://themusicplayer.org/html/hgbm.php").get();
                 Elements info = doc.select("body");
 
-                text=info.text();
+                text=info.html();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -88,7 +90,12 @@ public class SimpleTabsActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             // Set description into TextView
             TextView txtdesc = (TextView) findViewById(R.id.text);
-            txtdesc.setText(text);
+            txtdesc.setText(Html.fromHtml(text, new Html.ImageGetter() {
+                @Override
+                public Drawable getDrawable(String source) {
+                    return null;
+                }
+            }, null));
 
         }
 
