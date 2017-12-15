@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "82421968170",
+    "firebase_url": "https://hgbm-fc045.firebaseio.com",
+    "project_id": "hgbm-fc045",
+    "storage_bucket": "hgbm-fc045.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82421968170:android:624093a3230086b5",
+        "android_client_info": {
+          "package_name": "yube.com.hgbmhergnbirmakale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82421968170-epmvqupb3a1a44sqlqlu2ldldqb9eq4i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "yube.com.hgbmhergnbirmakale",
+            "certificate_hash": "8ad3df6ebdaef8e5c0f7c232a33f9c780fe4faf2"
+          }
+        },
+        {
+          "client_id": "82421968170-a48dult5di6nasfrdfljnludccl7k6hv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC85psRAocciAYRWiFxR2B6LWeElsZYdvE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82421968170-a48dult5di6nasfrdfljnludccl7k6hv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,11 @@
 package yube.com.hgbmhergnbirmakale.activity;
 
-import android.graphics.drawable.Drawable;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,8 +13,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,23 +38,23 @@ public class SimpleTabsActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_simple_tabs);
-
-        new text().execute();
+        // getActionBar().setDisplayHomeAsUpEnabled(false);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setTitle("Her Gün Bir Makale");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -60,47 +65,26 @@ public class SimpleTabsActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-
-    private class text extends AsyncTask<Void, Void, Void> {
-        String text;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Document doc = Jsoup.connect("http://themusicplayer.org/html/hgbm.php").get();
-                Elements info = doc.select("body");
-
-                text=info.html();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            return null;
-
-        }
-        @Override
-        protected void onPostExecute(Void result) {
-            // Set description into TextView
-            TextView txtdesc = (TextView) findViewById(R.id.text);
-            txtdesc.setText(Html.fromHtml(text, new Html.ImageGetter() {
-                @Override
-                public Drawable getDrawable(String source) {
-                    return null;
-                }
-            }, null));
-
-        }
-
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);//Menu Resource, Menu
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+
+                new jsoup().execute();
+
+        }
+
+
+        return true;
+    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -129,5 +113,74 @@ public class SimpleTabsActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+
+    private class jsoup extends AsyncTask<Void, Void, Void> {
+        String text_bilim = "İnternet bağlantınız kopmuş yahut kurbağa hızında :(";
+        String text_kultur = "İnternet bağlantınız kopmuş yahut kurbağa hızında :(";
+        String text_edebiyat = "İnternet bağlantınız kopmuş yahut kurbağa hızında :(";
+
+        boolean temp = true;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            try {
+                Document doc = Jsoup.connect("http://themusicplayer.org/html/bilim.php").timeout(4000).get();
+                Elements info = doc.select("body");
+
+                text_bilim = info.html();
+                doc = Jsoup.connect("http://themusicplayer.org/html/kultur.php").timeout(4000).get();
+                info = doc.select("body");
+
+                text_kultur = info.html();
+                doc = Jsoup.connect("http://themusicplayer.org/html/edebiyat.php").timeout(4000).get();
+                info = doc.select("body");
+
+                text_edebiyat = info.html();
+
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                // editor.remove("teknoloji");
+                editor.putString("bilim", text_bilim);
+                editor.putString("kultur", text_kultur);
+                editor.putString("edebiyat", text_edebiyat);
+
+
+                editor.commit();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                temp = false;
+            }
+
+          //   progressDialog.dismiss();
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // Set description into TextView
+            if (temp) {
+                startActivity(new Intent(SimpleTabsActivity.this, SimpleTabsActivity.class));
+                finish();
+            }
+            else
+                Toast.makeText(SimpleTabsActivity.this, "İnternet bağlantınız kopmuş yahut kurbağa hızında :(", Toast.LENGTH_SHORT).show();
+
+        }
+
+
     }
 }
